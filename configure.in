@@ -1,0 +1,84 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.5)
+AC_INIT(libcxx, 1.0)
+AC_CONFIG_SRCDIR([src/logostream/logostream.cc])
+AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([config.h.in])
+AC_CONFIG_HEADER([config.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_LIBTOOL
+
+AC_PATH_PROG([DOXYGEN],[doxygen])
+AC_SUBST(DOXYGEN)
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([fcntl.h sys/time.h syslog.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_TYPE_UINT16_T
+
+# Checks for library functions.
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_FORK
+AC_FUNC_SELECT_ARGTYPES
+AC_TYPE_SIGNAL
+AC_CHECK_FUNCS([alarm gettimeofday memset select setenv strerror strtoul])
+
+case "$host_os" in
+    linux*)   LIBS_ADD="-ldb"
+              AC_DEFINE(LINUX,1,"Linux Operating System")
+              break;;
+    freebsd*) LIBS_ADD=""
+              AC_PATH_PROG([G33],[g++33] )
+              if test "x$G33" != "x" ; then CXX=g++33; fi
+              AC_DEFINE(FREEBSD,1,"FreeBSD Operating System")
+              break;;
+esac
+
+AC_SUBST(LIBS_ADD)
+
+AC_CONFIG_FILES([Makefile
+                 doc/Makefile
+                 doc/html/Makefile
+                 src/Makefile
+                 src/db/client/Makefile
+                 src/db/stream/Makefile
+                 src/dbstream/Makefile
+                 src/env/Makefile
+                 src/except/Makefile
+                 src/fork/Makefile
+                 src/logostream/Makefile
+                 src/static/Makefile
+                 src/timeter/Makefile])
+AC_OUTPUT
+
+if test "x$DOXYGEN" != "x" ; then DOXY=${DOXYGEN}; else DOXY="NOT FOUND"; fi
+
+cat << EOF
+-----------------------------------------------------------
+     $PACKAGE $VERSION configured successfully:
+
+     Installing into: $prefix
+
+     Host OS:         $host_os
+     Doxygen:         $DOXY
+-----------------------------------------------------------
+EOF
+
