@@ -1,58 +1,42 @@
-//@(#) User's environment with string -> string map
+//@(#) User's environment with string => string maps
 //@(#) Licence: LGPLv3
 //@(#) Author Andrew Wingorodov <http://andr.ru/>
-//$Id: iron.h 247 2008-02-08 14:48:36Z wingorodov $
+//$Id: iron.h,v 1.1.1.1 2007-12-20 15:53:44 wingorodov Exp $
 
 #ifndef _ENV_IRON_H
 #define _ENV_IRON_H 1
 
+#include "ment.h"
 #include <unistd.h>
-#include <ctype.h>
-
-#include <fstream>
-
-#include <ment.hpp>
-
-using namespace std;
-using namespace cxx;
 
 namespace env {
 
-///\brief It is not a space
-///\return True if it is not a space
-
-inline
-bool isnt_space (int sp_) ///\param sp_ Char for test
-{
-	return  (::isspace (sp_)) ? false : true;
-}
-
-///\class global
-///\brief User's environment
-
+/** @class global
+	@brief User's environment
+*/
 class global
-	: public ironment<std::string, std::string>
+	: public ironment<std::string,std::string>
 {
 public:
-///\name Constructor and Destructor
+//! \name Constructor and Destructor
 //@{
-	///\brief By default
-	global () {}
+	//! \brief By default
+	inline global () {}
 
-	///\brief Destructor
-	virtual ~global () {}
+	//! \brief Destructor
+	inline virtual ~global () {}
 //@}
 
-///\name getopt(3)
+//! \name getopt(3)
 //@{
-	///\brief Get options from a command line
-
-	void getopt (
-		  int argc_ ///\param argc_ argc 
-		, char* argv_[] ///\param argv_ argv
-		, const std::string optstring_ ///\param optstring_ List of keys
-	) {
-	  opterr = 0;
+	/** @brief Get options from a command line
+		@param argc_ argc 
+		@param argv_ argv
+		@param optstring_ List of keys
+	 */
+	inline
+	void getopt (int argc_, char* argv_[], const std::string optstring_)
+	{
 		std::string::const_iterator i;
 		for ( i = optstring_.begin (); i != optstring_.end (); ++i)
 		{
@@ -73,66 +57,40 @@ public:
 	}
 //@}
 
-///\name Configuration
+//! \name Configuration
 //@{
-	///\brief Configure environment from configuration file
+	/** @brief Configure environment from configuration file
+		@param path_ File config
+	 */
 	virtual
-	void configure (
-		 const std::string& path_///\param path_ File config
-	) {
-		std::ifstream cfg (path_.c_str());
-		if ( !cfg.is_open ())
-			throw er::no (path_ + " configure error: ");
-
-		std::string _val;
-
-		while ( std::getline( cfg, _val))
-		{
-			std::string::size_type pos;
-			if ( (pos=_val.find(':')) == string::npos) continue;
-
-			std::string _key ( _val.begin (), _val.begin()+pos );
-			_val.erase ( _val.begin(), _val.begin()+pos+1 );
-
-			//-- Remove spaces from key
-			_key.erase (
-				  std::remove_if ( _key.begin(), _key.end(), ::isspace)
-				, _key.end()
-			);
-
-			//-- Remove spaces after colon
-			_val.erase (
-				  _val.begin ()
-				, std::find_if ( _val.begin(), _val.end(), isnt_space)
-			);
-
-			operator[] (_key) = _val;
-		}
+	void
+	 configure (const std::string& path_)
+	{
 	}
 //@}
 
 private:
-
-	///\brief Get option as key
+	/** @brief Get option as key
+		@param c_ Option without argument
+	 */
+	inline
 	void
-	 getoptkey (
-		 int c_ ///\param c_ Option without argument
-	) {
-		vars [ std::string()+(char)c_ ] = std::string(); }
+	 getoptkey (int c) { vars [ std::string()+(char)c ] = std::string(); }
 	
-	///\brief Get option with argument
+	/** @brief Get option with argument
+		@param c_ Option with argument
+	 */
+	inline
 	void
-	 getoptarg (
-		int c_ ///\param c_ Option with argument
-	) {
-		vars [ std::string()+(char)c_ ] = ::optarg; }
+	 getoptarg (int c) { vars [ std::string()+(char)c ] = ::optarg; }
 
-	typedef void ( global::*function) (int); ///< Pointer to function
-	std::map<int,function> trigger; ///< Map of functions
+	typedef void ( global::*function) (int); //!< Pointer to function
+	std::map<int,function> trigger; //!< Map of functions
 
 }; //.class global
 
 extern global iron;
+
 } //::env
 
 #endif //!_ENV_IRON_H

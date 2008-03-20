@@ -1,44 +1,33 @@
 //@(#) Log output stream exapmle
 // Licence: LGPLv3
 // Author Andrew Wingorodov <http://andr.mobi/>
-// $Id: example.cc 590 2008-03-12 14:59:33Z wingorodov $
+// $Id: example.cc,v 1.1.1.1 2007-12-20 15:53:44 wingorodov Exp $
 
-#include <logostream.hpp>
+#include <logostream.h>
 
 using namespace std;
-using namespace cxx;
+using namespace log;
 
 int
  main ()
 {
-	logs << "You are open the logs now and write input " << endl
-		 << "from you keyboard to syslog (type CTRL-D to close)"
-		 << endl;
+	log::s << "You are open the logs now and write input "
+			<< "from you keyboard to syslog" << endl
+			<< "(type CTRL-D to close)"
+			<< endl;
 
-	logs.open ("test") ;
-	logs.level (level_notice);
+	///log::s.open ("test") ;
+	log::s.level (level_notice);
 
 	std::string in;
 	while (std::getline (std::cin,in))
 	{
-		logs << error << "error seen " << in << endl;
-		logs << warning << "warning seen " << in << endl;
-		logs << notice << "notice seen " << in << endl;
-		logs << info << "info hide " << in << endl;
-		logs << debug << "debug hide " << in << endl;
-
-		if (logs.is (level_warning))
-			logs << warning << "is (level_warning) seen " << in << endl;
-
-		if (logs << notice)
-			logs << "if (notice) seen " << in << endl;
-
-		if (logs << info)
-			logs << "if (info) hide " << in << endl;
+		log::s << info << "discard this message" << endl
+				<< critical << "example: " << in << endl;
 	}
 
-	logs.close ();
-	logs << "Well, we are close connect to syslogd(8) and write messages "
-	 	 << "to std::cout again. Look up result at /var/log/test.log"
-		 << endl;
+	///log::s.close ();
+	log::s  << "Well, we are close connect to syslogd(8) and write messages "
+	 		<< "to std::cout again. Look up result at /var/log/test.log"
+			<< endl;
 }

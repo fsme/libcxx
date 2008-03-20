@@ -1,27 +1,22 @@
-//@(#) Example for use of env::iron
+//@(#) Example for use env::iron
 //@(#) Licence: LGPLv3
 //@(#) Author Andrew Wingorodov <http://andr.ru/>
-//$Id: example.cc 210 2008-02-06 14:47:53Z wingorodov $
+//$Id: example.cc,v 1.1.1.1 2007-12-20 15:53:44 wingorodov Exp $
 
 #include <string>
 #include <iron.h>
 
-#include <logostream.hpp>
-
-using namespace std;
-using namespace cxx;
-
 int
- main (int argc, char *argv[])
-{
-try {
-	logs << warning << "Using: example -c simple.conf" << endl;
+ main (\
+	  int argc
+	, char *argv[]
+) {
 	env::iron.getopt (argc, argv, "abc:d");
-	env::iron.configure ( env::iron ("c") );
-	
-	logs << warning << env::iron.getenv ("PATH") << endl;
-
 	env::iron.print (" => ");
+	env::iron.configure ("/path/to/config");
+	
+	try {
+	std::cout << env::iron.getenv ("PATH") << std::endl;
 
 	} catch (const std::exception& e) {
 			std::cout << e.what () << std::endl;
