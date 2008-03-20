@@ -1,0 +1,32 @@
+# @(#) Build DB stream
+# @(#) Licence: LGPLv3
+# @(#) Author Andrew Wingorodov <http://andr.ru/>
+# $Id: Makefile,v 1.1.1.1 2007-12-20 15:53:44 wingorodov Exp $
+
+CXXFLAGS+=	-I.\
+			-I../logostream\
+			-L/usr/lib
+
+TARGET=example
+OBJS= berkeley.o addr_insert.o example.o\
+	 	../logostream/logostream.o
+LIBS= -ldb
+
+include /etc/default/mk
+
+#
+addr_insert.o: berkeley.o addr_insert.cc addr_insert.h dbstream.h
+	$(CXX) $(CXXFLAGS) -c addr_insert.cc
+#
+berkeley.o: berkeley.cc berkeley.h dbfile.h 
+	$(CXX) $(CXXFLAGS) -c berkeley.cc
+#
+example.o: addr_insert.o example.cc
+	$(CXX) $(CXXFLAGS) -c example.cc $(LIBS)
+
+#
+../logostream/logostream.o:
+	make -C ../logostream logostream.o
+
+clean clear:
+	rm -rfv $(TARGET) *.o *.core
