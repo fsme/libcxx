@@ -52,13 +52,13 @@ public:
 	const
 	std::string& getenv (
 		const std::string& name_ ///\param name_ Name of variable
-	) const {
-		static std::string _name;
+	) {
 		const char* s;
 		if ( (s = ::getenv (name_.c_str()) ) == NULL)
 			throw std::invalid_argument (name_ + ": not found");
 
-		return _name = s;
+		vars [name_] = s;
+		return vars [name_];
 	}
 //@}
 
