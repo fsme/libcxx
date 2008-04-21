@@ -19,7 +19,7 @@ try {
 	env::iron.getopt (argc, argv, "abc:d");
 	env::iron.configure ( env::iron ("c") );
 	
-	logs << warning << env::iron.getenv ("PATH") << endl;
+	logs << warning << env::iron.getenv ("HOME") << endl;
 
 	env::iron.print (" => ");
 

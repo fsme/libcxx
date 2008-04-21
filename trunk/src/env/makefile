@@ -18,7 +18,7 @@ $(TARGET): $(HEADERS) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
 ../logostream/logostream.o:
-	make -f Makefile.old -C ../logostream ../logostream/logostream.o
+	make -C ../logostream ../logostream/logostream.o
 
 clean clear:
-	rm -rfv $(TARGET) *.o *.core
+	rm -rfv $(TARGET) *.o ../logostream/logostream.o *.core
