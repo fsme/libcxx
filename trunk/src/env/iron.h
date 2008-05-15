@@ -43,73 +43,64 @@ public:
 	virtual ~global () {}
 //@}
 
-///\name getopt(3)
-//@{
-	///\brief Get options from a command line
-
-	void getopt (
-		  int argc_ ///\param argc_ argc 
-		, char* argv_[] ///\param argv_ argv
-		, const std::string optstring_ ///\param optstring_ List of keys
-	) {
-	  opterr = 0;
-		std::string::const_iterator i;
-		for ( i = optstring_.begin (); i != optstring_.end (); ++i)
-		{
-			if (*i == ':')
-				trigger [ (int)(*(i-1)) ] = &global::getoptarg;
-			else
-				trigger [ (int)(*i) ] = &global::getoptkey;
-		}
-		int c; c ^= c;
-		while  ( (c = ::getopt ( argc_, argv_, optstring_.c_str() ) ) != -1)
-			if ( trigger.find (c) != trigger.end () )
-				(this->*trigger[c])(c);
-
-		argc_ -= optind;
-		argv_ += optind;
-		optind ^= optind;
-		trigger.clear();
+///\brief Get options from a command line
+void getopt (
+	  int& argc_ ///\param argc_ argc 
+	, char**& argv_ ///\param argv_ argv
+	, const std::string optstring_ ///\param optstring_ List of keys
+) {
+	opterr = 0;
+	std::string::const_iterator i;
+	for ( i = optstring_.begin (); i != optstring_.end (); ++i)
+	{
+		if (*i == ':') trigger [ (int)(*(i-1)) ] = &global::getoptarg;
+		else
+			trigger [ (int)(*i) ] = &global::getoptkey;
 	}
-//@}
+	int c;
+	while  ( (c = ::getopt ( argc_, argv_, optstring_.c_str() ) ) != -1)
+		if ( trigger.find (c) != trigger.end () )
+			(this->*trigger[c])(c);
 
-///\name Configuration
-//@{
-	///\brief Configure environment from configuration file
-	virtual
+	argc_ -= optind;
+	argv_ += optind;
+	trigger.clear();
+}
+
+///\brief Configure environment from configuration file
+virtual
 	void configure (
-		 const std::string& path_///\param path_ File config
-	) {
-		std::ifstream cfg (path_.c_str());
-		if ( !cfg.is_open ())
-			throw er::no (path_ + " configure error: ");
+	 const std::string& path_///\param path_ File config
+) {
+	std::ifstream cfg (path_.c_str());
+	if ( !cfg.is_open ())
+		throw er::no (path_ + " configure error: ");
 
-		std::string _val;
+	std::string _val;
 
-		while ( std::getline( cfg, _val))
-		{
-			std::string::size_type pos;
-			if ( (pos=_val.find(':')) == string::npos) continue;
+	while ( std::getline( cfg, _val))
+	{
+		std::string::size_type pos;
+		if ( (pos=_val.find(':')) == string::npos) continue;
 
-			std::string _key ( _val.begin (), _val.begin()+pos );
-			_val.erase ( _val.begin(), _val.begin()+pos+1 );
+		std::string _key ( _val.begin (), _val.begin()+pos );
+		_val.erase ( _val.begin(), _val.begin()+pos+1 );
 
-			//-- Remove spaces from key
-			_key.erase (
-				  std::remove_if ( _key.begin(), _key.end(), ::isspace)
-				, _key.end()
-			);
+		//-- Remove spaces from key
+		_key.erase (
+			  std::remove_if ( _key.begin(), _key.end(), ::isspace)
+			, _key.end()
+		);
 
-			//-- Remove spaces after colon
-			_val.erase (
-				  _val.begin ()
-				, std::find_if ( _val.begin(), _val.end(), isnt_space)
-			);
+		//-- Remove spaces after colon
+		_val.erase (
+			  _val.begin ()
+			, std::find_if ( _val.begin(), _val.end(), isnt_space)
+		);
 
-			operator[] (_key) = _val;
-		}
+		operator[] (_key) = _val;
 	}
-//@}
+}
 
 private:
 
