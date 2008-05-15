@@ -43,35 +43,29 @@ public:
 	virtual ~global () {}
 //@}
 
-///\name getopt(3)
-//@{
-	///\brief Get options from a command line
-
-	void getopt (
-		  int argc_ ///\param argc_ argc 
-		, char* argv_[] ///\param argv_ argv
-		, const std::string optstring_ ///\param optstring_ List of keys
-	) {
-	  opterr = 0;
-		std::string::const_iterator i;
-		for ( i = optstring_.begin (); i != optstring_.end (); ++i)
-		{
-			if (*i == ':')
-				trigger [ (int)(*(i-1)) ] = &global::getoptarg;
-			else
-				trigger [ (int)(*i) ] = &global::getoptkey;
-		}
-		int c; c ^= c;
-		while  ( (c = ::getopt ( argc_, argv_, optstring_.c_str() ) ) != -1)
-			if ( trigger.find (c) != trigger.end () )
-				(this->*trigger[c])(c);
-
-		argc_ -= optind;
-		argv_ += optind;
-		optind ^= optind;
-		trigger.clear();
+///\brief Get options from a command line
+void getopt (
+	  int& argc_///\param argc_ Arguments counter 
+	, char**& argv_///\param argv_ Argvuments vector of string
+	, const std::string optstring_ ///\param optstring_ List of keys
+) {
+	opterr = 0;
+	std::string::const_iterator i;
+	for ( i = optstring_.begin (); i != optstring_.end (); ++i)
+	{
+		if (*i == ':') trigger [ (int)(*(i-1)) ] = &global::getoptarg;
+		else
+			trigger [ (int)(*i) ] = &global::getoptkey;
 	}
-//@}
+	int c;
+	while  ( (c = ::getopt ( argc_, argv_, optstring_.c_str() ) ) != -1)
+		if ( trigger.find (c) != trigger.end () )
+			(this->*trigger[c])(c);
+
+	argc_ -= optind;
+	argv_ += optind;
+	trigger.clear();
+}
 
 ///\name Configuration
 //@{
