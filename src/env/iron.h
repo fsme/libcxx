@@ -50,6 +50,9 @@ void getopt (
 	, const std::string optstring_ ///\param optstring_ List of keys
 ) {
 	opterr = 0;
+
+	//get_program_name (argv_[0]);
+
 	std::string::const_iterator i;
 	for ( i = optstring_.begin (); i != optstring_.end (); ++i)
 	{
@@ -69,7 +72,7 @@ void getopt (
 
 ///\brief Configure environment from configuration file
 virtual
-	void configure (
+void configure (
 	 const std::string& path_///\param path_ File config
 ) {
 	std::ifstream cfg (path_.c_str());
@@ -104,19 +107,19 @@ virtual
 
 private:
 
-	///\brief Get option as key
-	void
-	 getoptkey (
-		 int c_ ///\param c_ Option without argument
-	) {
-		vars [ std::string()+(char)c_ ] = std::string(); }
+///\brief Get option as key
+void
+	getoptkey ( int c_ ///\param c_ Option without argument
+) {
+	vars [ std::string()+(char)c_ ] = std::string("");
+}
 	
-	///\brief Get option with argument
-	void
-	 getoptarg (
-		int c_ ///\param c_ Option with argument
-	) {
-		vars [ std::string()+(char)c_ ] = ::optarg; }
+///\brief Get option with argument
+void
+	getoptarg ( int c_ ///\param c_ Option with argument
+) {
+	vars [ std::string()+(char)c_ ] = ::optarg;
+}
 
 	typedef void ( global::*function) (int); ///< Pointer to function
 	std::map<int,function> trigger; ///< Map of functions
