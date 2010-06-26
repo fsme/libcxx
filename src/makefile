@@ -47,9 +47,9 @@ iron.o: $(IRON_SRC)
 
 clean clear:
 	@rm -rfv $(LIBSO) $(LIBA) *.o 
-	make -f Makefile.old -C logostream clean
-	make -f Makefile.old -C env clean
-	make -f Makefile.old -C except clean
-	make -f Makefile.old -C timeter clean
-	make -f Makefile.old -C static clean
-	make -f Makefile.old -C db/client clean
+	make -C logostream clean
+	make -C env clean
+	make -C except clean
+	make -C timeter clean
+	make -C static clean
+	make -C db/client clean
